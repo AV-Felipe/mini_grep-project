@@ -1,5 +1,6 @@
 use std::env;
 use std::fs;
+use std::process;
 
 fn main() {
     
@@ -7,7 +8,10 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     println!("{:?}", args);
 
-    let config = Config::new(&args);
+    let config = Config::new(&args).unwrap_or_else(|err|{
+        println!("Problem passing arguments: {}", err);
+        process::exit(1);
+    });
 
     // use the second argument as a reference for file read operation
     let content = fs::read_to_string(config.filename)
@@ -24,10 +28,10 @@ struct Config {
 }
 
 impl Config {
-    fn new(args: &[String]) -> Config {
+    fn new(args: &[String]) -> Result<Config, &'static str> {
 
         if args.len() < 3 {
-            panic!("not enough arguments");
+            return Err("not enough arguments");
         }
     
         // here we opt on cloning the values received by reference, to avoid having
@@ -38,6 +42,6 @@ impl Config {
         println!("searching for {}", query);
         println!("in file {}", filename);
     
-        Config {query, filename}
+        Ok(Config {query, filename})
     }
 }
