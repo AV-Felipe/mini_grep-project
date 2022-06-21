@@ -1,6 +1,7 @@
 use std::env;
 use std::fs;
 use std::process;
+use std::error::Error;
 
 fn main() {
     
@@ -13,11 +14,21 @@ fn main() {
         process::exit(1);
     });
 
-    // use the second argument as a reference for file read operation
-    let content = fs::read_to_string(config.filename)
-        .expect("something went wrong reading the file");
+    if let Err(e) = run(config) {
+        println!("Application error: {}", e);
+        process::exit(1);
+    }
+
+}
+
+fn run (config: Config) -> Result<(), Box<dyn Error>>{
+
+    // here we use the ? for returning the error, else the code goes on
+    let content = fs::read_to_string(config.filename)?;
 
     println!("text content:\n{}", content);
+
+    Ok(())
 }
 
 // by using a struct to store this two values, we convey that
