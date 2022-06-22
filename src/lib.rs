@@ -17,9 +17,6 @@ impl Config {
         let query = args[1].clone();
         let filename = args[2].clone();
     
-        println!("searching for {}", query);
-        println!("in file {}", filename);
-    
         Ok(Config {query, filename})
     }
 }
@@ -30,7 +27,27 @@ pub fn run (config: Config) -> Result<(), Box<dyn Error>>{
     // here we use the ? for returning the error, else the code goes on
     let content = fs::read_to_string(config.filename)?;
 
-    println!("text content:\n{}", content);
-
     Ok(())
+}
+
+// lifetime here is telling that the string slice we are returning is referencing
+//the content parameter, and must exist for as long as that parameter data exists
+pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    vec![]
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn one_result() {
+        let query = "duct";
+        let contents = "\
+        Rust:
+        safe, fast, productive.
+        Pick three.";
+
+        assert_eq!(vec!["safe, fast, productive."], search(query,contents));
+    }
 }
