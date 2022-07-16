@@ -10,7 +10,7 @@ fn main() {
     let args: Vec<String> = env::args().collect();
 
     let config = Config::new(&args).unwrap_or_else(|err|{
-        println!("Problem passing arguments: {}", err);
+        eprintln!("Problem passing arguments: {}", err);
         process::exit(1);
     });
 
@@ -19,7 +19,7 @@ fn main() {
     //if (let pattern_to_be_matched) = (value_to_be_compared_against the_pattern) {code_to_be_run_if_match}
     // view: https://doc.rust-lang.org/reference/expressions/if-expr.html
     if let Err(e) = minigrep::run(config) {
-        println!("Application error: {}", e);
+        eprintln!("Application error: {}", e);
         process::exit(1);
     }
 
